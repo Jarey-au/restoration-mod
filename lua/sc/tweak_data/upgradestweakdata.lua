@@ -106,10 +106,10 @@ function UpgradesTweakData:_init_pd2_values()
 	self.values.player.body_armor.concealment = {
 		30,
 		25,
-		20,
+		23,
+		21,
 		15,
 		5,
-		1,
 		0
 	}
 	self.values.player.body_armor.damage_shake = { 
@@ -169,6 +169,7 @@ function UpgradesTweakData:_init_pd2_values()
     	self.values.player.yakuza_berserker = {true}
 		self.values.player.electrocution_resistance_multiplier = {1}
 		self.values.player.dodge_to_heal = {true}
+		self.values.player.melee_to_heal = {true}
 		self.values.player.dodge_on_revive = {true}
 	--Bot boost stuff stuff--
 	self.values.team.crew_add_health = {3}
@@ -392,7 +393,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.player.health_multiplier = {1.15, 1.4}
 
 				--Bullseye
-				self.values.player.headshot_regen_armor_bonus = {0.05, 3.5}
+				self.values.player.headshot_regen_armor_bonus = {0.5, 3.5}
 				self.on_headshot_dealt_cooldown = 3
 
 				--Iron Man
@@ -934,6 +935,10 @@ function UpgradesTweakData:_init_pd2_values()
 		}
 	}
 
+	self.values.player.heal_over_time = {
+		0.1
+	}	
+
 	self.values.team.armor.multiplier = {1.05}
 	self.values.team.health.passive_multiplier = {1.05}
 	self.hostage_max_num = {
@@ -1021,9 +1026,25 @@ function UpgradesTweakData:_init_pd2_values()
 	}
 
 	--Rogue
-	self.dodge_to_heal = {
-		0.4, --% healed
-		3.0 --cooldown
+	self.dodge_to_hot_data = {
+		armors_allowed = {"level_1", "level_2", "level_3", "level_4", "level_5", "level_6", "level_7"},
+		works_with_armor_kit = true,
+		tick_time = 2.0,
+		total_ticks = 10.0,
+		max_stacks = 67,
+		stacking_cooldown = 0.0,
+		add_stack_sources = {
+			bullet = false,
+			explosion = false,
+			melee = false,
+			taser_tased = false,
+			poison = false,
+			fire = false,
+			projectile = false,
+			swat_van = false,
+			sentry_gun = false,
+			civilian = false
+		}
 	}
 
 	--Gambler
@@ -1171,11 +1192,24 @@ function UpgradesTweakData:_init_pd2_values()
 		{50, 6}
 	}
 	
-	--yoooooooooooooooooo--
-	self.values.player.armor_regen_damage_health_ratio_multiplier = {
-		0.20,
-		0.35,
-		0.50
+	--Yakuza--
+	self.values.player.survive_one_hit = {true}
+	self.values.survive_one_hit_armor = {5.0}
+
+	self.values.player.resistance_damage_health_ratio_multiplier = {
+		0.2
+	}
+
+	self.values.player.dodge_regen_damage_health_ratio_multiplier = {
+		0.10
+	}
+
+	self.values.player.melee_kill_dodge_regen = {
+		0.5
+	}
+
+	self.values.player.kill_dodge_regen = {
+		0.5
 	}
 	
 	--Fat benis :DDDDD
@@ -1601,6 +1635,15 @@ function UpgradesTweakData:_player_definitions()
 		upgrade = {
 			category = "player",
 			upgrade = "dodge_to_heal",
+			value = 1
+		}
+	}
+	self.definitions.player_melee_to_heal = {
+		category = "feature",
+		name_id = "menu_player_melee_to_heal",
+		upgrade = {
+			category = "player",
+			upgrade = "melee_to_heal",
 			value = 1
 		}
 	}
@@ -2269,6 +2312,60 @@ function UpgradesTweakData:_saw_definitions()
 			category = "shotgun",
 			upgrade = "swap_speed_multiplier",
 			value = 1
+		}
+	}
+	self.definitions.player_heal_over_time = {
+		name_id = "menu_player_heal_over_time",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "heal_over_time",
+			category = "player"
+		}
+	}
+	self.definitions.player_survive_one_hit = {
+		name_id = "menu_player_survive_one_hit",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "survive_one_hit",
+			category = "player"
+		}
+	}
+	self.definitions.player_dodge_regen_damage_health_ratio_multiplier = {
+		name_id = "menu_player_dodge_regen_damage_health_ratio_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "dodge_regen_damage_health_ratio_multiplier",
+			category = "player"
+		}
+	}
+	self.definitions.player_resistance_damage_health_ratio_multiplier = {
+		name_id = "menu_player_resistance_damage_health_ratio_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "resistance_damage_health_ratio_multiplier",
+			category = "player"
+		}
+	}
+	self.definitions.player_melee_kill_dodge_regen = {
+		name_id = "menu_player_melee_kill_dodge_regen",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "melee_kill_dodge_regen",
+			category = "player"
+		}
+	}
+	self.definitions.player_kill_dodge_regen = {
+		name_id = "menu_player_kill_dodge_regen",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "kill_dodge_regen",
+			category = "player"
 		}
 	}
 end

@@ -35,10 +35,15 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 		managers.sequence:add_inflict_updator_body("fire", self._unit:key(), self._inflict_damage_body:key(), self._inflict_damage_body:extension().damage)
 
 		--Load alternate heal over time tweakdata if player is using Infiltrator.
-		if player_manager:has_category_upgrade("melee", "stacking_hit_damage_multiplier") then
+		if player_manager:has_category_upgrade("player", "melee_to_heal") then
 			self._doh_data = tweak_data.upgrades.melee_to_hot_data or {}
+			self._hot_amount = managers.player:upgrade_value("player", "heal_over_time", 0)
+		elseif player_manager:has_category_upgrade("player", "dodge_to_heal") then
+			self._doh_data = tweak_data.upgrades.dodge_to_hot_data or {}
+			self._hot_amount = managers.player:upgrade_value("player", "heal_over_time", 0)
 		else 
 			self._doh_data = tweak_data.upgrades.damage_to_hot_data or {}
+			self._hot_amount = managers.player:upgrade_value("player", "damage_to_hot", 0)
 		end
 
 		self._damage_to_hot_stack = {}
@@ -52,12 +57,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 		self._has_damage_speed = managers.player:has_inactivate_temporary_upgrade("temporary", "damage_speed_multiplier")
 		self._has_damage_speed_team = managers.player:upgrade_value("player", "team_damage_speed_multiplier_send", 0) ~= 0
 
-		self._dodge_points = (tweak_data.player.damage.DODGE_INIT 
-			+managers.player:body_armor_value("dodge")
-			+managers.player:skill_dodge_chance(false, false, false))
-			or 0.0
+		self._dodge_points = 0.0
 		self._dodge_meter = 0.0 --Amount of dodge built up as meter. Caps at '150' dodge.
-		self._dodge_heal_cooldown = 0.0 --rogue dodge_to_heal skill
+		self._in_smoke_bomb = 0.0 --0 = not in smoke, 1 = inside smoke, 2 = inside own smoke.
+		self._can_survive_one_hit = player_manager:has_category_upgrade("player", "survive_one_hit")
 
 		local function revive_player()
 			self:revive(true)
@@ -286,9 +289,8 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			if attack_data.damage > 0 then
 				self:fill_dodge_meter(-1.0)
 				self:_send_damage_drama(attack_data, 0)
-				if pm:has_category_upgrade("player", "dodge_to_heal") and self:get_real_armor() == 0 and self._dodge_heal_cooldown == 0.0 then --Rogue health regen.
-					self:restore_health(tweak_data.upgrades.dodge_to_heal[1] * attack_data.damage, true)
-					self._dodge_heal_cooldown = tweak_data.upgrades.dodge_to_heal[2]
+				if pm:has_category_upgrade("player", "dodge_to_heal") then --Rogue health regen.
+					self:add_damage_to_hot()
 				end
 			end
 			self:_call_listeners(damage_info)
@@ -299,6 +301,7 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			managers.player:send_message(Message.OnPlayerDodge)
 			return	
 		end
+
 		if attack_data.attacker_unit:base()._tweak_table == "tank" then
 			managers.achievment:set_script_data("dodge_this_fail", true)
 		end
@@ -464,8 +467,9 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			managers.player:activate_temporary_upgrade("temporary", "reload_weapon_faster")
 		end
 		if managers.player:has_category_upgrade("player", "dodge_on_revive") then
-			self:fill_dodge_meter(1.5)
+			self:fill_dodge_meter(3.0, true)
 		end
+		self._can_survive_one_hit = managers.player:has_category_upgrade("player", "survive_one_hit")
 	end
 
 	function PlayerDamage:band_aid_health()
@@ -504,6 +508,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			else
 				attack_data.damage = attack_data.damage * 1
 			end
+		end
+
+		if managers.player:has_category_upgrade("player", "dodge_to_heal") and attack_data.damage > 0.0 then --Rogue health regen.
+			self._damage_to_hot_stack = {}
 		end
 		
 		attack_data.damage = attack_data.damage * managers.player:upgrade_value("player", "real_health_damage_reduction", 1)
@@ -607,71 +615,152 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			end
 		end	
     end
-	
-end
 
-function PlayerDamage:_max_armor()
-	local max_armor = self:_raw_max_armor()
+	function PlayerDamage:_max_armor()
+		local max_armor = self:_raw_max_armor()
 
-	if managers.player:has_category_upgrade("player", "armor_to_health_conversion") then
-		max_armor = 0
+		if managers.player:has_category_upgrade("player", "armor_to_health_conversion") then
+			max_armor = 0
+		end
+
+		return max_armor
 	end
 
-	return max_armor
-end
+	function PlayerDamage:_update_regenerate_timer(t, dt)
+		local regenerate_timer_tick = dt * (self._regenerate_speed or 1)
 
-function PlayerDamage:_update_regenerate_timer(t, dt)
-	local regenerate_timer_tick = dt * (self._regenerate_speed or 1)
-
-	--Smoke grenade armor regen bonus.
-	for _, smoke_screen in ipairs(managers.player._smoke_screen_effects or {}) do
-		if smoke_screen:is_in_smoke(self._unit) then
+		--Smoke grenade armor regen bonus.
+		if self._in_smoke_bomb > 0 then
 			regenerate_timer_tick = regenerate_timer_tick * tweak_data.upgrades.smoke_screen_armor_regen[1]
 		end
-	end
 
-	self._regenerate_timer = math.max(self._regenerate_timer - regenerate_timer_tick, 0)
+		self._regenerate_timer = math.max(self._regenerate_timer - regenerate_timer_tick, 0)
 
-	if self._regenerate_timer <= 0 then
-		self:_regenerate_armor()
-	end
-end
-
---Adds to/Subtracts from dodge meter and updates hud element.
-function PlayerDamage:fill_dodge_meter(dodge_added)
-	if self._dodge_points > 0 and not self:is_downed() then
-		self._dodge_meter = math.max(math.min(self._dodge_meter + dodge_added, 1.5), 0.0)
-		managers.hud:set_dodge_value(self._dodge_meter, self._dodge_points) --Goes through Hudmanager.lua then HUDtemp.lua.
-	end
-end
-
-Hooks:PostHook(PlayerDamage, "update" , "ResDodgeMeterMovementUpdate" , function(self, unit, t, dt)
-	--Smoke grenade capstone skill.
-	for _, smoke_screen in ipairs(managers.player._smoke_screen_effects or {}) do
-		if smoke_screen:is_in_smoke(self._unit) then
-			if smoke_screen:mine() then
-				self:fill_dodge_meter(self._dodge_points * dt * managers.player:upgrade_value("player", "sicario_multiplier", 0))
-			end
+		if self._regenerate_timer <= 0 then
+			self:_regenerate_armor()
 		end
 	end
 
-	--Burglar capstone skill.
-	if self._unit:movement():crouching() then
-		self:fill_dodge_meter(self._dodge_points * dt * managers.player:upgrade_value("player", "crouch_dodge_chance", 0))
+	function PlayerDamage:set_dodge_points()
+		self._dodge_points = (tweak_data.player.damage.DODGE_INIT 
+			+managers.player:body_armor_value("dodge")
+			+managers.player:skill_dodge_chance(false, false, false))
+			or 0.0
 	end
 
-	--Duck and Cover aced.
-	if self._unit:movement():running() then
-		self:fill_dodge_meter(self._dodge_points * dt * managers.player:upgrade_value("player", "run_dodge_chance", 0))
+	--Adds to/Subtracts from dodge meter and updates hud element.
+	function PlayerDamage:fill_dodge_meter(dodge_added, overfill)
+		if self._dodge_points > 0 and not self:is_downed() then
+			if overfill or (self._dodge_meter >= 1.5 and dodge_added < 0) then
+				self._dodge_meter = math.max(self._dodge_meter + dodge_added, 0.0)
+			elseif self._dodge_meter < 1.5 then
+				self._dodge_meter = math.max(math.min(self._dodge_meter + dodge_added, 1.5), 0.0)
+			end
+			managers.hud:set_dodge_value(math.min(self._dodge_meter, 1.5), self._dodge_points) --Goes through Hudmanager.lua then HUDtemp.lua.
+		end
 	end
 
-	if self._unit:movement():zipline_unit() then
-		self:fill_dodge_meter(self._dodge_points * dt * managers.player:upgrade_value("player", "on_zipline_dodge_chance", 0))
+	function PlayerDamage:fill_dodge_meter_yakuza(percent_added)
+		self:fill_dodge_meter(percent_added * self._dodge_points * (1 - self:health_ratio()))
 	end
 
-	self._dodge_heal_cooldown = math.max(self._dodge_heal_cooldown - dt, 0.0)
-end)
+	Hooks:PostHook(PlayerDamage, "update" , "ResDodgeMeterMovementUpdate" , function(self, unit, t, dt)
+		self._in_smoke_bomb = 0.0
+		for _, smoke_screen in ipairs(managers.player._smoke_screen_effects or {}) do
+			if smoke_screen:is_in_smoke(self._unit) then
+				if smoke_screen:mine() then
+					self._in_smoke_bomb = 2.0
+				else
+					self._in_smoke_bomb = 1.0
+				end
+			end
+		end
 
-Hooks:PostHook(PlayerDamage, "on_downed" , "ResDodgeMeterOnDown" , function(self)
-	self:fill_dodge_meter(-self._dodge_meter)
-end)
+		--Add passive dodge increases.
+		local passive_dodge = 0.0
+
+		--Yakuza capstone skill.
+		if self:health_ratio() < 0.5 then
+			passive_dodge = passive_dodge + (1 - self:health_ratio()) * managers.player:upgrade_value("player", "dodge_regen_damage_health_ratio_multiplier", 0)
+		end
+
+		--Sicario capstone skill.
+		if self._in_smoke_bomb == 2.0 then
+			passive_dodge = passive_dodge + managers.player:upgrade_value("player", "sicario_multiplier", 0)
+		end
+
+		--Burglar capstone skill.
+		if self._unit:movement():crouching() then
+			passive_dodge = passive_dodge + managers.player:upgrade_value("player", "crouch_dodge_chance", 0)
+		end
+
+		--Duck and Cover aced.
+		if self._unit:movement():running() then
+			passive_dodge = passive_dodge + managers.player:upgrade_value("player", "run_dodge_chance", 0)
+		elseif self._unit:movement():zipline_unit() then
+			passive_dodge = passive_dodge + managers.player:upgrade_value("player", "on_zipline_dodge_chance", 0)
+		end
+
+		self:fill_dodge_meter(self._dodge_points * dt * passive_dodge)
+	end)
+
+	Hooks:PostHook(PlayerDamage, "on_downed" , "ResDodgeMeterOnDown" , function(self)
+		self:fill_dodge_meter(-self._dodge_meter)
+	end)
+
+	function PlayerDamage:_upd_health_regen(t, dt)
+		if self._health_regen_update_timer then
+			self._health_regen_update_timer = self._health_regen_update_timer - dt
+
+			if self._health_regen_update_timer <= 0 then
+				self._health_regen_update_timer = nil
+			end
+		end
+
+		if not self._health_regen_update_timer then
+			local max_health = self:_max_health()
+
+			if self:get_real_health() < max_health then
+				self:restore_health(managers.player:health_regen(), false)
+				self:restore_health(managers.player:fixed_health_regen(self:health_ratio()), true)
+
+				self._health_regen_update_timer = 5
+			end
+		end
+
+		if #self._damage_to_hot_stack > 0 then
+			repeat
+				local next_doh = self._damage_to_hot_stack[1]
+				local done = not next_doh or TimerManager:game():time() < next_doh.next_tick
+
+				if not done then
+					local regen_rate = self._hot_amount --All this for a single line change so stacking health regen isn't coupled to grinder. :)
+
+					self:restore_health(regen_rate, true)
+
+					next_doh.ticks_left = next_doh.ticks_left - 1
+
+					if next_doh.ticks_left == 0 then
+						table.remove(self._damage_to_hot_stack, 1)
+					else
+						next_doh.next_tick = next_doh.next_tick + (self._doh_data.tick_time or 1)
+					end
+
+					table.sort(self._damage_to_hot_stack, function (x, y)
+						return x.next_tick < y.next_tick
+					end)
+				end
+			until done
+		end
+	end
+
+	Hooks:PreHook(PlayerDamage, "_check_bleed_out", "ResYakuzaCaptstoneCheck", function(self, can_activate_berserker, ignore_movement_state)
+		if self:get_real_health() == 0 and not self._check_berserker_done then
+			if self._can_survive_one_hit then
+				self:change_health(0.1)
+				self._can_survive_one_hit = false
+				self:restore_armor(tweak_data.upgrades.values.survive_one_hit_armor[1])
+			end
+		end
+	end)
+end
