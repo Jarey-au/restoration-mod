@@ -1885,7 +1885,8 @@ function SkillTreeTweakData:init(tweak_data)
 				},
 				[2] = {
 					upgrades = {
-						"player_counter_strike_spooc"
+						"player_counter_strike_spooc",
+						"player_spooc_damage_resist"
 					},
 					cost = self.costs.hightierpro
 				}
@@ -2718,7 +2719,7 @@ function SkillTreeTweakData:init(tweak_data)
 					"player_passive_dodge_chance_1"
 				},
 				cost = 400,
-				icon_xy = {7, 6},
+				icon_xy = {0, 7},
 				name_id = "menu_deck12_3",
 				desc_id = "menu_deck12_3_desc_sc"
 			},
@@ -2729,7 +2730,7 @@ function SkillTreeTweakData:init(tweak_data)
 					"player_armor_regen_damage_health_ratio_threshold_multiplier"
 				},
 				cost = 1000,
-				icon_xy = {0, 7},
+				icon_xy = {7, 6},
 				name_id = "menu_deck12_5",
 				desc_id = "menu_deck12_5_desc_sc"
 			},

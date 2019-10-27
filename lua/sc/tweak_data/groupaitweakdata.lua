@@ -244,37 +244,53 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			group_min = 0,
 			queue = "ch2"
 		}
-		self.enemy_chatter.incomming_tank = {
+		self.enemy_chatter.incomming_captain = {
 			radius = 1500,
-			max_nr = 0,
+			max_nr = 1,
 			duration = {10, 10},
 			interval = {0.5, 1},
 			group_min = 0,
-			queue = "bdz"
+			queue = "att"
+		}
+		self.enemy_chatter.incomming_gren = {
+			radius = 1500,
+			max_nr = 1,
+			duration = {10, 10},
+			interval = {0.5, 1},
+			group_min = 0,
+			queue = "bak"
+		}
+		self.enemy_chatter.incomming_tank = {
+			radius = 1500,
+			max_nr = 1,
+			duration = {10, 10},
+			interval = {0.5, 1},
+			group_min = 0,
+			queue = "mov"
 		}
 		self.enemy_chatter.incomming_spooc = {
 			radius = 1200,
-			max_nr = 0,
+			max_nr = 1,
 			duration = {10, 10},
 			interval = {0.5, 1},
 			group_min = 0,
-			queue = "clk"
+			queue = "r01"
 		}
 		self.enemy_chatter.incomming_shield = {
 			radius = 1500,
-			max_nr = 0,
+			max_nr = 1,
 			duration = {10, 10},
 			interval = {0.5, 1},
 			group_min = 0,
-			queue = "shd"
+			queue = "pos"
 		}
 		self.enemy_chatter.incomming_taser = {
 			radius = 1500,
-			max_nr = 0,
+			max_nr = 1,
 			duration = {60, 60},
 			interval = {0.5, 1},
 			group_min = 0,
-			queue = "tsr"
+			queue = "bak"
 		}
 		self.enemy_chatter.heal_chatter = {
 			radius = 700,
@@ -7709,6 +7725,55 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			},
 			access = access_type_all
 		}
+		if difficulty_index <= 7 then
+			self.unit_categories.Tank_Ben = {
+				unit_types = {
+					america = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},
+					zombie = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},					
+					russia = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},
+					murkywater = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},
+					nypd = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},	
+					lapd = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					}				
+				},
+				access = access_type_all
+			}	
+		else
+			self.unit_categories.Tank_Ben = {
+				unit_types = {
+					america = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun/ene_bulldozer_minigun")
+					},
+					zombie = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},					
+					russia = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},
+					murkywater = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun_classic/ene_bulldozer_minigun_classic")
+					},
+					nypd = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun/ene_bulldozer_minigun")
+					},	
+					lapd = {
+						Idstring("units/pd2_dlc_drm/characters/ene_bulldozer_minigun/ene_bulldozer_minigun")
+					}				
+				},
+				access = access_type_all
+			}		
+		end
 	if Month == "04" and Day == "01" and restoration.Options:GetValue("SC/Holiday") then		
 			self.unit_categories.Tank_Titan = {
 				unit_types = {
@@ -8174,10 +8239,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 	function GroupAITweakData:_init_enemy_spawn_groups(difficulty_index)
 		self._tactics = {
 			CS_cop = {
-			    "groupcsr",
 				"provide_coverfire",
 				"provide_support",
-				"ranged_fire"
+				"ranged_fire",
+			    "groupcsr"
 			},
 			CS_cop_stealth = {
 			    "grouphrtr",
@@ -8187,29 +8252,29 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			    "hitnrun"
 			},
 			CS_swat_rifle = {
-			    "groupcsr",
 				"smoke_grenade",
 				"charge",
 				"provide_coverfire",
 				"provide_support",
 				"ranged_fire",
-				"deathguard"
+				"deathguard",
+			    "groupcsr"
 			},
 			CS_swat_shotgun = {
-			    "groupcsr",
 				"smoke_grenade",
 				"charge",
 				"provide_coverfire",
 				"provide_support",
-				"shield_cover"
+				"shield_cover",
+			    "groupcsr"
 			},
 			CS_swat_heavy = {
-			    "groupcsr",
 				"smoke_grenade",
 				"charge",
 				"flash_grenade",
 				"provide_coverfire",
-				"provide_support"
+				"provide_support",
+			    "groupcsr"
 			},
 			CS_shield = {
 				"charge",
@@ -8275,15 +8340,15 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"elite_ranged_fire",
 				"provide_support"
 			},			
-			--very hard flank light rifle
+			--very hard light rifle
 			VH_swat_rifle = {
-			    "groupcsr",
 				"smoke_grenade",
 				"charge",
 				"provide_coverfire",
 				"provide_support",
 				"elite_ranged_fire",
-				"deathguard"
+				"deathguard",
+			    "groupcsr"
 			},
 			VH_swat_rifle_flank = {
 				"flank",
@@ -8295,45 +8360,45 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"provide_support"
 			},
 			FBI_suit = {
-			    "grouphrtr",
 				"flank",
 				"elite_ranged_fire",
-				"flash_grenade"
+				"flash_grenade",
+			    "grouphrtr"
 			},
 			FBI_suit_stealth = {
-			    "grouphrtr",
 			    "reloadingretreat",
 				"provide_coverfire",
 				"provide_support",
 				"flash_grenade",
 				"flank",
-			    "hitnrun"
+			    "hitnrun",
+			    "grouphrtr"
 			},
 			FBI_swat_rifle = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"provide_coverfire",
 				"charge",
 				"provide_support",
-				"elite_ranged_fire"
+				"elite_ranged_fire",
+				"groupcsr"
 			},
 			FBI_swat_shotgun = {
-				"groupcsr",
-				"smoke_grenade",
-				"flash_grenade",
-				"charge",
-				"provide_coverfire",
-				"provide_support"
-			},
-			FBI_heavy = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
 				"provide_coverfire",
 				"provide_support",
-				"deathguard"
+				"groupcsr"
+			},
+			FBI_heavy = {
+				"smoke_grenade",
+				"flash_grenade",
+				"charge",
+				"provide_coverfire",
+				"provide_support",
+				"deathguard",
+				"groupcsr"
 			},
 			FBI_shield = {
 				--"smoke_grenade",
@@ -8384,32 +8449,31 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
+				"obstacle",
 				"provide_coverfire",
 				"provide_support",
-				"obstacle",
 				"shield_cover"
 			},
 			--mayhem tactics
 			MH_swat_rifle = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"provide_coverfire",
 				"charge",
 				"provide_support",
 				"shield_cover",
-				"elite_ranged_fire"
+				"elite_ranged_fire",
+				"groupcsr"
 			},
 			MH_swat_shotgun = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
 				"provide_coverfire",
-				"provide_support"
+				"provide_support",
+				"groupcsr"
 			},
 			MH_heavy = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
@@ -8417,7 +8481,8 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"provide_support",
 				"shield_cover",
 				"deathguard",
-				"elite_ranged_fire"
+				"elite_ranged_fire",
+				"groupcsr"
 			},
 			MH_swat_rifle_flank = {
 				"flank",
@@ -8444,9 +8509,9 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
+				"obstacle",
 				"provide_coverfire",
 				"provide_support",
-				"obstacle",
 				"shield_cover",
 				"elite_ranged_fire"
 			},
@@ -8455,15 +8520,14 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
+				"obstacle",
 				"provide_coverfire",
 				"provide_support",
-				"obstacle",
 				"reloadingretreat",
 				"shield_cover"
 			},
 			--death wish tactics
 			DW_swat_rifle = {
-				"groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"provide_coverfire",
@@ -8471,7 +8535,8 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"provide_support",
 				"shield_cover",
 				"aggressor",
-				"elite_ranged_fire"
+				"elite_ranged_fire",
+				"groupcsr"
 			},
 			FBI_shield_flank = {
 				"flank",
@@ -8550,9 +8615,19 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"flash_grenade",
 			    "hitnrun"
 			},
+			--hunter hrt tactics
+			HRT_attack = {
+				"hunter",
+				"provide_coverfire",
+				"provide_support",
+				"smoke_grenade",
+				"flash_grenade",
+				"flank",
+			    "hitnrun",
+			    "grouphrtr"
+			},
 			--mean DS tactics below
 			ELITE_suit_stealth = {
-			    "grouphrtr",
 			    "reloadingretreat",
 			    "spoocavoidance",
 				"provide_coverfire",
@@ -8560,10 +8635,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"smoke_grenade",
 				"flash_grenade",
 				"flank",
-			    "hitnrun"
+			    "hitnrun",
+			    "grouphrtr"
 			},
 			ELITE_swat_rifle = {
-			    "groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"provide_coverfire",
@@ -8572,10 +8647,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"aggressor",
 				"provide_support",
 				"shield_cover",
-				"elite_ranged_fire"
+				"elite_ranged_fire",
+			    "groupcsr"
 			},
 			ELITE_heavy = {
-			    "groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
@@ -8584,10 +8659,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"provide_coverfire",
 				"provide_support",
 				"shield_cover",
-				"deathguard"
+				"deathguard",
+			    "groupcsr"
 			},
 			ELITE_swat_shotgun = {
-			    "groupcsr",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
@@ -8595,7 +8670,8 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				"aggressor",
 				"provide_coverfire",
 				"shield_cover",
-				"provide_support"
+				"provide_support",
+			    "groupcsr"
 			},
 			ELITE_swat_rifle_flank = {
 				"reloadingretreat",
@@ -8626,26 +8702,26 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			},
 			ELITE_heavy_flank = {
 				"reloadingretreat",
-			    "spoocavoidance",
 				"harass",
 				"flank",
 				"smoke_grenade",
 				"flash_grenade",
 				"charge",
+				"obstacle",
+			    "spoocavoidance",
 				"provide_coverfire",
 				"provide_support",
 				"shield_cover",
-				"obstacle",
 			    "hitnrun"
 			},
 			--Vanilla shit below
 			swat_shotgun_rush = {
-				"groupcsr",
 				"charge",
 				"provide_coverfire",
 				"provide_support",
 				"deathguard",
-				"flash_grenade"
+				"flash_grenade",
+				"groupcsr"
 			},
 			swat_shotgun_flank = {
 				"charge",
@@ -8656,10 +8732,10 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 			    "hitnrun"
 			},
 			swat_rifle = {
-				"groupcsr",
 				"ranged_fire",
 				"provide_coverfire",
-				"provide_support"
+				"provide_support",
+				"groupcsr"
 			},
 			swat_rifle_flank = {
 				"elite_ranged_fire",
@@ -8867,7 +8943,7 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				}
 			}
 		}
-		if difficulty_index <= 6 then
+		if difficulty_index <= 5 then
 			self.enemy_spawn_groups.CS_tazers = {
 				amount = {2, 3},
 				spawn = {
@@ -8885,6 +8961,35 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 						amount_min = 1,
 						amount_max = 2,
 						tactics = self._tactics.CS_cop_stealth,
+						rank = 1
+					},
+					{
+						unit = "medic_M4",
+						freq = 0.2,
+						amount_max = 1,
+						tactics = self._tactics.CS_cop_stealth,
+						rank = 2
+					}
+				}
+			}
+		elseif difficulty_index == 6 then
+			self.enemy_spawn_groups.CS_tazers = {
+				amount = {2, 3},
+				spawn = {
+					{
+						unit = "CS_tazer",
+						freq = 1,
+						amount_min = 1,
+						amount_max = 1,
+						tactics = self._tactics.CS_tazer,
+						rank = 2
+					},
+					{
+						unit = "CS_swat_MP5",
+						freq = 1,
+						amount_min = 1,
+						amount_max = 2,
+						tactics = self._tactics.HRT_attack,
 						rank = 1
 					},
 					{
@@ -9274,7 +9379,7 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 					{
 						unit = "FBI_swat_M4",
 						freq = 1,
-						tactics = self._tactics.MH_swat_rifle,
+						tactics = self._tactics.MH_swat_rifle_flank,
 						rank = 2
 					},					
 					{
@@ -9309,7 +9414,7 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 					{
 						unit = "FBI_suit_M4_MP5",
 						freq = 1,
-						tactics = self._tactics.MH_swat_rifle,
+						tactics = self._tactics.HRT_attack,
 						rank = 2
 					},					
 					{
@@ -9344,7 +9449,7 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 					{
 						unit = "FBI_suit_M4_MP5",
 						freq = 1,
-						tactics = self._tactics.ELITE_swat_rifle_flank,
+						tactics = self._tactics.HRT_attack,
 						rank = 2
 					},					
 					{
@@ -10014,27 +10119,73 @@ if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue(
 				}
 			}
 		}
-		self.enemy_spawn_groups.Cap_Spring = {
-			amount = {3, 3},
-			spawn = {
-				{
-					unit = "Cap_Spring",
-					freq = 1,
-					amount_min = 1,
-					amount_max = 1,
-					tactics = self._tactics.Cap_spring,
-					rank = 1
-				},
-				{
-					unit = "Tank_Titan",
-					freq = 1,
-					amount_min = 2,
-					amount_max = 2,
-					tactics = self._tactics.Cap_spring,
-					rank = 2
+		if difficulty_index <= 5 then
+			self.enemy_spawn_groups.Cap_Spring = {
+				amount = {1, 1},
+				spawn = {
+					{
+						unit = "Cap_Spring",
+						freq = 1,
+						amount_min = 1,
+						amount_max = 1,
+						tactics = self._tactics.Cap_spring,
+						rank = 1
+					}
 				}
-			}
-		}		
+			}	
+		elseif difficulty_index == 6 or difficulty_index == 7 then
+			self.enemy_spawn_groups.Cap_Spring = {
+				amount = {3, 3},
+				spawn = {
+					{
+						unit = "Cap_Spring",
+						freq = 1,
+						amount_min = 1,
+						amount_max = 1,
+						tactics = self._tactics.Cap_spring,
+						rank = 1
+					},
+					{
+						unit = "Tank_Titan",
+						freq = 1,
+						amount_min = 2,
+						amount_max = 2,
+						tactics = self._tactics.Cap_spring,
+						rank = 2
+					}
+				}
+			}				
+		else
+			self.enemy_spawn_groups.Cap_Spring = {
+				amount = {5, 5},
+				spawn = {
+					{
+						unit = "Cap_Spring",
+						freq = 1,
+						amount_min = 1,
+						amount_max = 1,
+						tactics = self._tactics.Cap_spring,
+						rank = 1
+					},
+					{
+						unit = "Tank_Titan",
+						freq = 1,
+						amount_min = 2,
+						amount_max = 2,
+						tactics = self._tactics.Cap_spring,
+						rank = 2
+					},
+					{
+						unit = "Tank_Ben",
+						freq = 1,
+						amount_min = 2,
+						amount_max = 2,
+						tactics = self._tactics.Cap_spring,
+						rank = 2
+					},					
+				}
+			}			
+		end
 		self.enemy_spawn_groups.Cap_Autumn = {
 			amount = {1, 1},
 			spawn = {
