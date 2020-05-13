@@ -1,4 +1,4 @@
-if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue("SC/SC") then
+--[[
 
 function TankCopLogicAttack.update(data)
 	local t = data.t
@@ -77,4 +77,4 @@ function TankCopLogicAttack.update(data)
 	end
 end
 
-end
+]]--

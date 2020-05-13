@@ -6,7 +6,7 @@ local maps = {
 	nomercy = true
 }
 
-if restoration.Options:GetValue("HUD/Loadouts") then
+if restoration.Options:GetValue("HUD/UI/Loadouts") then
 function HUDMissionBriefing:init(hud, workspace)
 	self._backdrop = MenuBackdropGUI:new(workspace)
 	self._backdrop:create_black_borders()
@@ -719,7 +719,7 @@ function HUDMissionBriefing:set_contact_info(contact, interupt)
 		the_continental = "guis/textures/restoration/mission_briefing/the_continental",
 		events = "guis/textures/restoration/mission_briefing/event",
 		shatter = "guis/textures/restoration/mission_briefing/shatter",
-		sina = "guis/textures/pd2/mission_briefing/hector/contact"
+		sin = "guis/textures/pd2/mission_briefing/hector/contact"
     }
 	local image = "guis/textures/restoration/mission_briefing/classic"
 	if set_image[contact] then
@@ -735,7 +735,7 @@ function HUDMissionBriefing:set_contact_info(contact, interupt)
         the_dentist = "guis/dlcs/big_bank/textures/pd2/mission_briefing/bd_pattern",
 		the_continental = "guis/textures/pd2/mission_briefing/bain/bd_pattern",
 		shatter = "guis/textures/restoration/mission_briefing/shatter_pattern",
-		sina = "guis/textures/pd2/mission_briefing/hector/bd_pattern"
+		sin = "guis/textures/pd2/mission_briefing/hector/bd_pattern"
     }
 	local pattern = "guis/textures/pd2/mission_briefing/".. contact .."/bd_pattern"
 	if set_pattern[contact] then
@@ -754,7 +754,7 @@ end
 end]]--
  
 local init_actual = HUDMissionBriefing.init
-if not restoration.Options:GetValue("HUD/Loadouts") then
+if not restoration.Options:GetValue("HUD/UI/Loadouts") then
 function HUDMissionBriefing:init(hud, workspace, ...)
  
     self._current_contact = managers.job:current_contact_id()

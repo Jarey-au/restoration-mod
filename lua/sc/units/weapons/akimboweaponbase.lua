@@ -1,4 +1,6 @@
-if SC and SC._data.sc_player_weapon_toggle or restoration and restoration.Options:GetValue("SC/SCWeapon") then
+if _G.IS_VR then
+	--Ditto
+else	
 
 	local _update_stats_values_original = AkimboWeaponBase._update_stats_values
 	local fire_original = AkimboWeaponBase.fire
@@ -49,4 +51,4 @@ if SC and SC._data.sc_player_weapon_toggle or restoration and restoration.Option
 		return self._fire_mode == NewRaycastWeaponBase.IDSTRING_AUTO or self:in_burst_mode()
 	end
 	
-end
+end	

@@ -59,7 +59,7 @@ table.insert(tweak_data.color_grading,
 	}
 )
 
-if restoration.Options:GetValue("HUD/DifficultyMarkers") then	
+if restoration.Options:GetValue("HUD/UI/DifficultyMarkers") then	
 tweak_data.hud_icons.risk_swat = {
 		texture = "guis/textures/restoration/hud_difficultymarkers",
 		texture_rect = {
@@ -275,6 +275,31 @@ end
 
 
 if not tweak_data then return end
+if restoration.Options:GetValue("HUD/UI/PeerColors") then
+--Alpha Peer Colors
+	local orange = Vector3( 224, 109, 81 )/255 
+	local green = Vector3( 102, 204, 51 )/255 
+	local brown = Vector3( 98, 70, 43 )/255 
+	local blue = Vector3( 104, 133, 161 )/255 
+	local team_ai = Vector3( 0.2, 0.8, 1 ) --this has multiple different values in the code, but they're all a variety of green or yellow.  add those as a multichoice later on, but not important since they clash.
+
+	tweak_data.peer_vector_colors = { blue, orange, green, brown, team_ai }
+    tweak_data.peer_colors = { "mrblue", "mrorange", "mrgreen", "mrbrown", "mrai" } 
+	
+	tweak_data.chat_colors = {     
+			Color( tweak_data.peer_vector_colors[1]:unpack() ),
+			Color( tweak_data.peer_vector_colors[2]:unpack() ),
+			Color( tweak_data.peer_vector_colors[3]:unpack() ),
+			Color( tweak_data.peer_vector_colors[4]:unpack() ),
+			Color( tweak_data.peer_vector_colors[5]:unpack() )
+    }
+	tweak_data.preplanning_peer_colors = {     
+			Color( tweak_data.peer_vector_colors[1]:unpack() ),
+			Color( tweak_data.peer_vector_colors[2]:unpack() ),
+			Color( tweak_data.peer_vector_colors[3]:unpack() ),
+			Color( tweak_data.peer_vector_colors[4]:unpack() )
+    }
+end
 --Jackal codex entry
 table.insert (tweak_data.gui.crime_net.codex,
 
@@ -328,7 +353,7 @@ tweak_data.narrative.contacts.sina.image		= "guis/textures/pd2/crimenet_portrait
 tweak_data.narrative.contacts.sina.package = "packages/contact_hector"
 tweak_data.narrative.contacts.sina.assets_gui = Idstring( "guis/mission_briefing/preload_contact_hector" )
 --District descriptions
-if restoration.Options:GetValue("HUD/District") then
+if restoration.Options:GetValue("HUD/UI/District") then
 	tweak_data.gui.crime_net.regions = {
 		{closed=true, text={title_id="cn_menu_georgetown_title", sub_id="cn_menu_georgetown_sub", x=348, y=310}, {-10, 270, 293, 252, 271, 337, 341, 372, 372, 475, 475, 491, 491, 504, 503, 524, 536, 536, 542, 542, 555, 555, 598, 598, 638, 638, 657, 688, 686, 691, 701, 698, 687, 650, 634, 602, 609, 580, 576, 576, 567, 559, 558, 542, 543, 512, 512, 503, 381, 377, 348, 315, 315, 290, 290, 259, 259, 237, 237, 261, 261, 257, 224, 221, 187, 182, 163, 163, 147, 147, 133, 133, 102, 102, -10},{-10, -10, 28, 73, 122, 123, 132, 141, 145, 172, 216, 215, 180, 179, 229, 228, 244, 253, 253, 248, 247, 241, 241, 219, 219, 209, 208, 234, 241, 242, 262, 270, 277, 276, 279, 296, 300, 362, 361, 408, 416, 417, 430, 430, 477, 477, 514, 523, 523, 514, 514, 501, 493, 484, 469, 469, 465, 465, 439, 440, 434, 430, 429, 433, 433, 438, 438, 423, 423, 435, 435, 423, 423, 412, 412}},
 

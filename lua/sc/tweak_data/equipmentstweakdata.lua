@@ -1,11 +1,21 @@
-if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue("SC/SC") then
-
 local sc_etd = EquipmentsTweakData.init
 function EquipmentsTweakData:init()
 	sc_etd(self, tweak_data)
+	
+	self.armor_kit = {
+		icon = "equipment_armor_kit",
+		use_function_name = "use_armor_kit",
+		quantity = {1},
+		text_id = "debug_equipment_armor_kit",
+		description_id = "des_armor_kit",
+		dummy_unit = "units/payday2/equipment/gen_equipment_grenade_crate/gen_equipment_grenade_crate_dummy_unit",	
+		deploy_time = 2,
+		visual_object = "g_armorbag"
+	}	
 
 	--Because you're not getting 6 fucking sentries--
 	self.sentry_gun.quantity = {1}
+	self.first_aid_kit.quantity = {3}
 	self.trip_mine.quantity = {3, 3}
 	self.ecm_jammer.quantity = {2}
 	self.ecm_jammer.deploy_time = 1
@@ -24,8 +34,8 @@ function EquipmentsTweakData:init()
 		grenades = 50,
 		asset_ammo_bag = 4,
 		asset_grenade_crate = 3,
-		first_aid_kit = 14,
-		asset_bodybags_bag = 3,
+		first_aid_kit = 9,
+		asset_bodybags_bag = 4,
 		bodybags_bag = 2,
 		sentry_gun = -1,
 		doctor_bag = 2
@@ -72,8 +82,8 @@ function EquipmentsTweakData:init()
 		self.specials.blood_sample_verified.quantity=1
 		self.specials.blood_sample_verified.max_quantity=4	
 		self.specials.mayan_gold_bar.quantity=4
-		self.specials.mayan_gold_bar.max_quantity=4			
+		self.specials.mayan_gold_bar.max_quantity=4		
+		self.specials.lance_part.quantity=4
+		self.specials.lance_part.max_quantity=4				
    	end
-end
-
 end

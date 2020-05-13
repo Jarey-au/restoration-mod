@@ -1,5 +1,3 @@
-if SC and SC._data.sc_player_weapon_toggle or restoration and restoration.Options:GetValue("SC/SCWeapon") then
-
 function NewFlamethrowerBase:setup_default()
 	self._damage_near = tweak_data.weapon[self._name_id].damage_near
 	self._damage_far = tweak_data.weapon[self._name_id].damage_far
@@ -205,6 +203,4 @@ function NewFlamethrowerBase:_fire_raycast(user_unit, from_pos, direction, dmg_m
 		})
 	end
 	return result
-end
-
 end

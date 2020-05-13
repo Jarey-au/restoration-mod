@@ -51,28 +51,248 @@ function UpgradesTweakData:_init_value_tables()
 	self.values.team.damage_dampener = {}
 end
 
+local sc_upg_old_init = UpgradesTweakData.init
+function UpgradesTweakData:init(tweak_data)
+	sc_upg_old_init(self, tweak_data)
+	
+	local level = {
+		l2 = {
+				name_id = "weapons",
+				upgrades = {
+					"colt_1911",
+					"mac10",
+					"hajk",
+					"x_mac10"
+				}
+			},	
+		l10 = {
+				name_id = "lvl_10",
+				upgrades = {
+					"cutters",
+					"shawn"
+				}
+			},	
+		l12 = {
+				name_id = "body_armor3",
+				upgrades = {
+					"body_armor3",
+					"cobray",
+					"boxcutter"
+				}
+			},			
+		l14 = {
+				name_id = "weapons",
+				upgrades = {
+					"bayonet",
+					"m1928",
+					"sparrow",
+					"gator",
+					"pl14"
+				}
+			},
+		l15 = {
+				name_id = "weapons",
+				upgrades = {
+					"msr",
+					"benelli",
+					"plainsrider",
+					"sub2000",
+					"road",
+					"legacy"
+				}
+			},
+		l18 = {
+				name_id = "weapons",
+				upgrades = {
+					"baseballbat",
+					"scorpion",
+					"oldbaton",
+					"hockey",
+					"meter",
+					"hauteur",
+					"shock",
+					"fear"
+				}
+			},
+		l19 = {
+				name_id = "weapons",
+				upgrades = {
+					"olympic",
+					"mp9",
+					"baka",
+					"x_baka",
+					"pugio",
+					"ballistic"
+				}
+			},
+		l20 = {
+				name_id = "lvl_20",
+				upgrades = {
+					"schakal",
+					"agave",
+					"happy",
+					"shepheard",
+					"slap"
+				}
+			},
+		l23 = {
+				name_id = "weapons",
+				upgrades = {
+					"bullseye",
+					"c96",
+					"par",
+					"m37",
+					"rota",
+					"cs",
+					"brick",
+					"ostry"
+				}
+			},
+		l25 = {
+				name_id = "weapons",
+				upgrades = {
+					"boxing_gloves",
+					"meat_cleaver",
+					"wpn_prj_four",
+					"sr2",
+					"grip",
+					"push",
+					"breech",
+					"ching",
+					"erma",
+					"sap"
+				}
+			},
+		l27 = {
+				name_id = "weapons",
+				upgrades = {
+					"famas",
+					"g26",
+					"twins",
+					"pitchfork",
+					"shrew",
+					"x_shrew",
+					"basset"
+				}
+			},
+		l28 = {
+				name_id = "weapons",
+				upgrades = {
+					"hs2000",
+					"vhs",
+					"bowie",
+					"micstand"
+				}
+			},
+		l30 = {
+				name_id = "lvl_30",
+				upgrades = {
+					"shuno"
+				}
+			},
+		l32 = {
+				name_id = "weapons",
+				upgrades = {
+					"x46",
+					"tec9",
+					"tiger",
+					"model70"
+				}
+			},
+		l36 = {
+				name_id = "weapons",
+				upgrades = {
+					"p90",
+					"deagle",
+					"winchester1874"
+				}
+			},
+		l39 = {
+				name_id = "weapons",
+				upgrades = {
+					"m16",
+					"huntsman",
+					"polymer",
+					"china"
+				}
+			},
+		l40 = {
+				name_id = "lvl_40",
+				upgrades = {}
+			},
+		l42 = {
+				name_id = "weapons",
+				upgrades = {
+					"fal",
+					"tomahawk",
+					"coal"
+				}
+			},
+		l50 = {
+				name_id = "lvl_50",
+				upgrades = {}
+			},
+		l51 = {
+				name_id = "weapons",
+				upgrades = {
+					"machete",
+					"sterling"
+				}
+			},
+		l55 = {
+				name_id = "weapons",
+				upgrades = {
+					"uzi"
+				}
+			},
+		l60 = {
+				name_id = "lvl_60",
+				upgrades = {}
+			},
+		l70 = {
+				name_id = "lvl_70",
+				upgrades = {}
+			},
+		l80 = {
+				name_id = "lvl_80",
+				upgrades = {}
+			},
+		l90 = {
+				name_id = "lvl_90",
+				upgrades = {}
+			},
+		l100 = {
+				name_id = "lvl_100",
+				upgrades = {}
+			}			
+	}
+
+	--Insert level variables into level_tree.
+	for i=1, 100 do
+		local currLevel = level["l" .. tostring(i)]
+		if currLevel then
+			self.level_tree[i] = currLevel
+		end
+	end 	
+
+end		
+
 local sc_sttd = UpgradesTweakData._init_pd2_values
 function UpgradesTweakData:_init_pd2_values()
 	sc_sttd(self, tweak_data)
 	
 	--Upgrade Value changes for skills and such--
 
-	if SC and SC._data.sc_player_weapon_toggle or restoration and restoration.Options:GetValue("SC/SCWeapon") then
+	--Explosives hurt--
+	self.explosive_bullet.curve_pow = 1
+	self.explosive_bullet.player_dmg_mul = 0.5
+	self.explosive_bullet.range = 250
+	self.explosive_bullet.feedback_range = self.explosive_bullet.range
+	self.explosive_bullet.camera_shake_max_mul = 4
 
-		--Explosives hurt--
-		self.explosive_bullet.curve_pow = 3
-		self.explosive_bullet.player_dmg_mul = 0.5
-		self.explosive_bullet.range = 250
-		self.explosive_bullet.feedback_range = self.explosive_bullet.range
-		self.explosive_bullet.camera_shake_max_mul = 4
-
-		--Restoring movement penalties--
-		self.weapon_movement_penalty.minigun = 1
-		self.weapon_movement_penalty.lmg = 1
-
-	end
-
-	if SC and SC._data.sc_ai_toggle or restoration and restoration.Options:GetValue("SC/SC") then
+	--Restoring movement penalties--
+	self.weapon_movement_penalty.minigun = 0.75
+	self.weapon_movement_penalty.lmg = 1
 
 	--Armor related stuff--
 	self.values.player.body_armor.armor = {
@@ -140,37 +360,43 @@ function UpgradesTweakData:_init_pd2_values()
 		1.12
 	}
 	self.values.player.body_armor.skill_max_health_store = {
-		10,
-		9,
 		8,
-		7,
-		5,
+		7.2,
+		6.4,
+		5.6,
+		4.8,
 		4,
-		3
+		3.2
 	}
 	self.kill_change_regenerate_speed_percentage = true
 	self.values.player.body_armor.skill_kill_change_regenerate_speed = {
-		1.50,
-		1.45,
 		1.40,
 		1.35,
 		1.30,
 		1.25,
-		1.20
+		1.20,
+		1.15,
+		1.10
+	}
+	self.values.player.body_armor.deflection = {
+		0.00,
+		0.05,
+		0.10,
+		0.15,
+		0.20,
+		0.15,
+		0.10
 	}
 
 	self.values.rep_upgrades.values = {0}
 	
 	--Custom stuff for SC's mod, mainly suppression resistance and stuff--
-    	self.values.player.suppression_resist = {true}
-    	self.values.player.ignore_suppression_flinch = {true}
-    	self.values.player.health_revive_max = {true}
-		self.values.player.no_deflection = {true}
-    	self.values.player.yakuza_berserker = {true}
-		self.values.player.electrocution_resistance_multiplier = {1}
-		self.values.player.dodge_to_heal = {true}
-		self.values.player.melee_to_heal = {true}
-		self.values.player.dodge_on_revive = {true}
+	self.values.player.ignore_suppression_flinch = {true}
+	self.values.player.health_revive_max = {true}
+	self.values.player.no_deflection = {true}
+	self.values.player.yakuza_berserker = {true}
+	self.values.player.electrocution_resistance_multiplier = {1}
+	
 	--Bot boost stuff stuff--
 	self.values.team.crew_add_health = {3}
 	self.values.team.crew_add_armor = {1.5}
@@ -178,7 +404,7 @@ function UpgradesTweakData:_init_pd2_values()
 	self.values.team.crew_add_concealment = {1}
 	self.values.team.crew_add_stamina = {25}
 	self.values.team.crew_reduce_speed_penalty = {1}
-	self.values.team.crew_health_regen = {0.15}
+	self.values.team.crew_health_regen = {0.1}
 	self.values.team.crew_throwable_regen = {70}
 	self.values.team.crew_faster_reload = {1.1}
 	self.values.team.crew_faster_swap = {1}	
@@ -186,28 +412,33 @@ function UpgradesTweakData:_init_pd2_values()
 	--Crew ability stuff
 	self.values.team.crew_inspire = {
 		{
-			60,
-			60,
+			90,
+			75,
 			60
 		}
 	}
 	self.values.team.crew_scavenge = {
 		{
 			0.25,
-			0.25,
-			0.25
+			0.5,
+			0.75
 		}
 	}
 	self.values.team.crew_interact = {
 		{
 			0.85,
-			0.85,
-			0.85
+			0.7,
+			0.55
 		}
 	}
 	self.values.team.crew_ai_ap_ammo = {true}
 	
 	--Equipment--
+	self.values.first_aid_kit.uppers_cooldown = 30
+	self.values.first_aid_kit.heal_amount = 10 --Heals 100 health on use.
+	self.values.doctor_bag.heal_amount = 0.2 --Heals 20% of max health on use.
+	self.values.doctor_bag.passive_regen = 0.04
+	self.values.doctor_bag.passive_regen_duration = 180.1 --Heals 4% of max health every 4 seconds for the next 3 minutes or until you enter bleedout.
 	
 	--ECMs--
 	self.ecm_jammer_base_battery_life = 10
@@ -215,7 +446,7 @@ function UpgradesTweakData:_init_pd2_values()
 	self.ecm_jammer_base_range = 2500
 	self.ecm_feedback_min_duration = 20
 	self.ecm_feedback_max_duration = 20
-	self.ecm_feedback_interval = 1.5	
+	self.ecm_feedback_interval = 1.5
 	self.ecm_feedback_retrigger_interval = 240
 	
 	--[[   MASTERMIND   ]]--
@@ -236,7 +467,7 @@ function UpgradesTweakData:_init_pd2_values()
 				
 				--Quick Fix
 				self.values.first_aid_kit.deploy_time_multiplier = {0.5}
-				self.values.temporary.first_aid_damage_reduction = { {0.85, 20} }
+				self.values.temporary.first_aid_damage_reduction = { {0.5, 5} }
 
 				--Painkillers--
 				self.values.temporary.passive_revive_damage_reduction = {
@@ -245,7 +476,7 @@ function UpgradesTweakData:_init_pd2_values()
 				}
 			
 				--Uppers
-				self.values.first_aid_kit.quantity = {4, 10}
+				self.values.first_aid_kit.quantity = {3, 6}
 				self.values.first_aid_kit.downs_restore_chance = {0}
 
 				--Combat Doctor
@@ -257,12 +488,12 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.player.long_dis_revive = {0.5, 0.5}
 				self.skill_descs.inspire = {multibasic = "50%", multibasic2 = "20%", multibasic3 = "10", multipro = "50%"}
 				self.values.cooldown.long_dis_revive = {
-					{1, 60}
+					{1, 90}
 				}
 				self.morale_boost_speed_bonus = 1.2
 				self.morale_boost_suppression_resistance = 1
 				self.morale_boost_time = 10
-				self.morale_boost_reload_speed_bonus = 1
+				self.morale_boost_reload_speed_bonus = 1.2
 				self.morale_boost_base_cooldown = 3.5
 			--}
 			
@@ -296,12 +527,18 @@ function UpgradesTweakData:_init_pd2_values()
 
 				--Partners in Crime--
 				self.values.player.passive_convert_enemies_health_multiplier = {
-					0.6,
+					0.5,
 					0.2
-				}				
+				}
+				self.values.player.minion_master_health_multiplier = {
+					1.15
+				}
+				self.values.player.minion_master_speed_multiplier = {
+					1.05
+				}
 							
 				--Hostage Taker
-				self.values.player.hostage_health_regen_addend = {0.01, 0.02}
+				self.values.player.hostage_health_regen_addend = {0.125, 0.25}
 				self.values.team.damage = {
 					hostage_absorption = {0.1},
 					hostage_absorption_limit = 4
@@ -326,7 +563,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.smg.damage_multiplier = {1}
 				
 				--Shock and Awe
-				self.values.weapon.clip_ammo_increase = {1.3, 1.5}
+				self.values.weapon.clip_ammo_increase = {1.2, 1.5}
 
 				--Heavy Impact
 				self.values.weapon.knock_down = {0.1, 0.25}
@@ -347,7 +584,7 @@ function UpgradesTweakData:_init_pd2_values()
 				
 				--Shotgun CQB
 				self.values.shotgun.reload_speed_multiplier = {1.25, 1.5}
-				self.values.shotgun.enter_steelsight_speed_multiplier = {1.5}
+				self.values.shotgun.enter_steelsight_speed_multiplier = {1.75}
 				self.skill_descs.shotgun_cqb = {multibasic = "25%", multibasic2 = "25%", multipro = "25%", multipro2 = "125%"}
 
 				--Shotgun Impact
@@ -377,11 +614,11 @@ function UpgradesTweakData:_init_pd2_values()
 			--{
 				--Stun Resistance
 				self.values.player.damage_shake_addend = {1}
+				self.values.player.resist_melee_push = {0.025}
 				self.values.player.flashbang_multiplier = {0.5, 0.25}
 				
 				--Die Hard
-				self.values.player.armor_regen_timer_multiplier = {0.9}
-				self.values.player.primary_weapon_when_downed = {true}
+				self.values.player.deflection_addend = {0.05, 0.10}
 
 				--Transporter
 				self.values.carry.movement_speed_multiplier = {1.5}
@@ -398,6 +635,7 @@ function UpgradesTweakData:_init_pd2_values()
 
 				--Iron Man
 				self.values.player.shield_knock = {true}
+				self.values.player.armor_regen_timer_multiplier = {0.95}
 
 			--}
 			
@@ -468,10 +706,11 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.sentry_gun.shield = {true}	
 		
 				--Jack of All Trades
+				self.values.player.throwables_multiplier = {1.5}
 				self.values.player.second_deployable = {true}
 				self.values.player.second_deployable_full = {true}
 	
-				--Tower Defence
+				--Tower Defense
 				self.values.sentry_gun.quantity = {1, 2}
 				self.skill_descs.tower_defense = { 
 					[1] = 1, 
@@ -482,7 +721,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.sentry_gun.less_noisy = {true}
 				self.values.sentry_gun.ap_bullets = {true}
 				self.values.sentry_gun.fire_rate_reduction = {4}
-				self.values.sentry_gun.damage_multiplier = {1.5}	
+				self.values.sentry_gun.damage_multiplier = {1}	
 
 				--Bulletproof
 				self.values.player.armor_multiplier = {1.2, 1.5}
@@ -494,7 +733,8 @@ function UpgradesTweakData:_init_pd2_values()
 			--[[   BREACHER SUBTREE   ]]--
 			--{
 				--Hardware Expert
-				self.values.player.drill_fix_interaction_speed_multiplier = {0.5}
+				self.values.player.drill_deploy_speed_multiplier = {0.5}
+				self.values.player.drill_fix_interaction_speed_multiplier = {0.8, 0.5}
 				self.values.player.drill_alert_rad = {900}
 				self.values.player.silent_drill = {true}
 				
@@ -503,7 +743,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.trip_mine.damage_multiplier = {1.5}
 
 				--Drill Sawgent
-				self.values.player.drill_speed_multiplier = {0.85, 0.7}
+				self.values.player.drill_speed_multiplier = {0.9, 0.7}
 				
 				--Demoman
 				self.values.player.trip_mine_deploy_time_multiplier = {
@@ -535,6 +775,7 @@ function UpgradesTweakData:_init_pd2_values()
 					"smg",
 					"snp"
 				}
+				self.values.player.not_moving_accuracy_increase = {1}
 				
 				--Kilmer
 				self.values.assault_rifle.reload_speed_multiplier = {1.25}
@@ -547,26 +788,30 @@ function UpgradesTweakData:_init_pd2_values()
 				--Rifleman
 				self.values.assault_rifle.enter_steelsight_speed_multiplier = {1.5}
 				self.values.weapon.enter_steelsight_speed_multiplier = {1.25}
-				self.values.player.single_shot_accuracy_inc = {0.9}
+				self.values.player.single_shot_accuracy_inc = {0.75}
 				
-				--Explosive Headshot
+				--Mind Blown, formerly Explosive Headshot, formerly Graze
 				self.values.snp.graze_damage = {
 					{
-						radius = 300,
-						damage_factor = 0.3,
-						damage_factor_headshot = 0.3
+						radius = 400,
+						max_chain = 4,
+						damage_factor = 0.70,
+						damage_factor_range = 0.00,
+						range_increment = 700
 					},
 					{
 						radius = 500,
-						damage_factor = 0.6,
-						damage_factor_headshot = 0.6
+						max_chain = 4,
+						damage_factor = 0.70,
+						damage_factor_range = 0.10,
+						range_increment = 700
 					}
 				}				
 
 				--Ammo Efficiency
 				self.values.player.head_shot_ammo_return = {
-					{ ammo = 1, time = 6, headshots = 3 },
-					{ ammo = 1, time = 6, headshots = 2 }
+					{ ammo = 0.035, time = 6, headshots = 3, to_magazine = false },
+					{ ammo = 0.035, time = 6, headshots = 2, to_magazine = true }
 				}
 
 				--Aggressive Reload
@@ -596,11 +841,11 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.player.small_loot_multiplier = {1.3, 1.3}
 				
 				--Cleaner
-				self.values.player.corpse_dispose_amount = {2, 3}
+				self.values.player.corpse_dispose_amount = {3, 4}
 				self.values.player.extra_corpse_dispose_amount = {1}
 				self.values.bodybags_bag.quantity = {1}
 				self.values.player.cleaner_cost_multiplier = {0}
-				self.values.weapon.special_damage_taken_multiplier = {1.1}
+				self.values.weapon.special_damage_taken_multiplier = {1.05, 1.15}
 				
 				--Nimble
 				self.values.player.pick_lock_easy_speed_multiplier = {0.5, 0.25}
@@ -613,7 +858,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.player.buy_spotter_asset = {true}
 				
 				--Systems Specialist
-				self.values.player.tape_loop_duration = {25, 50}
+				self.values.player.tape_loop_duration = {10, 30}
 				self.values.player.hack_fix_interaction_speed_multiplier = {0.75, 0.25}
 				self.values.player.marked_inc_dmg_distance = {{2000, 1.3}}
 				self.values.player.mark_enemy_time_multiplier = {2}
@@ -622,7 +867,7 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.ecm_jammer.quantity = {1, 2}
 				self.values.ecm_jammer.duration_multiplier_2 = {1.25}
 				self.values.ecm_jammer.feedback_duration_boost_2 = {1.25}
-				self.values.player.melee_kill_snatch_pager_chance = {0}
+				self.values.player.melee_kill_snatch_pager_chance = {1}
 				
 				--ECM Overdrive
 				self.values.ecm_jammer.feedback_duration_boost = {1.25}
@@ -658,22 +903,46 @@ function UpgradesTweakData:_init_pd2_values()
 				--Moving Target
 				self.values.player.detection_risk_add_movement_speed = {
 					{
-						0.01,
+						0.015,
 						3,
 						"below",
 						35,
 						0.15
 					},
 					{
-						0.01,
+						0.015,
 						1,
 						"below",
 						35,
 						0.15
 					}
 				}
+				self.values.player.backstab_dodge = {
+					0.75
+				}
 
 				--Shockproof
+				self.values.player.taser_malfunction = {
+					{
+						interval = 1,
+						chance_to_trigger = 0.15
+					}
+				}				
+				self.values.player.taser_self_shock = {
+					true
+				}	
+				self.values.player.escape_taser = {
+					2
+				}				
+				self.counter_taser_damage = 0.5			
+
+				--Sneaky Bastard
+				self.values.player.health_damage_bonus_dodge = {
+					0.5
+				}
+				self.values.player.dodge_heal_no_armor = {
+					0.04 --% of maximum health
+				}
 
 			--}
 			
@@ -681,21 +950,43 @@ function UpgradesTweakData:_init_pd2_values()
 			--{
 				--Second Wind--
 				self.values.temporary.damage_speed_multiplier = {
-					{1.15, 5},
-					{1.3, 8}
+					{1.15, 3},
+					{1.3, 3}
 				}
+				self.values.player.armor_depleted_stagger_shot = {0, 3}
 
 				--Optical Illusions
-				self.values.player.silencer_concealment_increase = {1}
-				self.values.player.silencer_concealment_penalty_decrease = {2}
+				self.values.player.silencer_concealment_penalty_decrease = {1}
+				self.values.player.silencer_concealment_increase = {1, 2}
 
 				--The Professional
 				self.values.weapon.silencer_spread_index_addend = {1}
 				self.values.weapon.silencer_recoil_index_addend = {1}
 				self.values.weapon.silencer_enter_steelsight_speed_multiplier = {1.5}
 
-				--Dire Need
-				self.values.player.armor_depleted_stagger_shot = {0, 5}
+				--Unseen Strike, formally Dire Need
+				self.values.temporary.unseen_strike = {
+					{
+						1.15,
+						3
+					},
+					{
+						1.15,
+						6
+					}
+				}
+				self.values.player.unseen_increased_crit_chance = {
+					{
+						min_time = 3,
+						max_duration = 3,
+						crit_chance = 1.15
+					},
+					{
+						min_time = 3,
+						max_duration = 6,
+						crit_chance = 1.15
+					}
+				}				
 				
 				--Spotter
 				self.values.weapon.silencer_damage_multiplier = {1, 1}
@@ -719,7 +1010,7 @@ function UpgradesTweakData:_init_pd2_values()
 						0.3
 					}
 				}
-
+				self.values.player.backstab_crits = {0.50}
 
 			--}
 		--}
@@ -729,16 +1020,23 @@ function UpgradesTweakData:_init_pd2_values()
 			--[[   GUNSLINGER SUBTREE   ]]--
 			--{
 				--Equilibrium
-				self.values.pistol.swap_speed_multiplier = {1.8}
+				self.values.pistol.swap_speed_multiplier = {1.5, 3}
 				self.values.team.pistol.recoil_index_addend = {1}
 				self.values.team.pistol.suppression_recoil_index_addend = self.values.team.pistol.recoil_index_addend
 				
-				--Gun Nut
-				self.values.pistol.spread_index_addend = {1}			
+				--Gun Nut	
 				self.values.pistol.fire_rate_multiplier = {1.15}
+				self.values.pistol.move_spread_multiplier = {0.5}
+				self.values.pistol.spread_index_addend = {1}						
 
 				--Over Pressurized/Gunfighter (Formerly Akimbo)
-				self.values.pistol.reload_speed_multiplier = {1.25, 1.5}
+				self.values.pistol.magazine_capacity_inc = {
+					5
+				}				
+				self.values.pistol.hip_fire_spread_multiplier = {
+					0.5
+				}				
+				self.values.pistol.reload_speed_multiplier = {1.15, 1.4}
 				self.values.pistol.damage_multiplier = {1}
 				
 				--Akimbo (Formerly Over Pressurized/Custom Ammo)
@@ -748,40 +1046,43 @@ function UpgradesTweakData:_init_pd2_values()
 					1.3,
 					1.2
 				}
+
 				self.values.akimbo.recoil_index_addend = {
-					-10,
-					-8,
-					-5,
-					-3,
-					-1
+					0,
+					2,
+					4,
+					6,
+					8
 				}
 				self.values.akimbo.spread_index_addend = {
-					-4,
-					-3,
-					-2,
-					-1,
-					0
-				}				
+					0,
+					1,
+					2,
+					3,
+					4
+				}
 
 				--Desperado
 				self.values.pistol.stacked_accuracy_bonus = {
-					{accuracy_bonus = 1.1, max_stacks = 4, max_time = 10},
-					{accuracy_bonus = 1.1, max_stacks = 4, max_time = 20}
+					{accuracy_bonus = 0.92, max_stacks = 5, max_time = 6},
+					{accuracy_bonus = 0.92, max_stacks = 5, max_time = 8}
 				}
+				self.values.player.desperado_bodyshot_refresh = {true}
 				
 				--Trigger Happy
 				self.values.pistol.stacking_hit_damage_multiplier = {
 					{
-						damage_bonus = 1.15,
-						max_stacks = 4,
-						max_time = 10
+						damage_bonus = 1.1,
+						max_stacks = 5,
+						max_time = 6
 					},
 					{	
-						damage_bonus = 1.15,
-						max_stacks = 4,
-						max_time = 20
+						damage_bonus = 1.1,
+						max_stacks = 5,
+						max_time = 8
 					}
 				}
+				self.values.player.trigger_happy_bodyshot_refresh = {true}
 
 			--}
 			
@@ -792,23 +1093,27 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.temporary.reload_weapon_faster = {{1.25, 10}}
 				self.values.temporary.increased_movement_speed = {{1.25, 10}}
 				
-				--Nine Lives (Formerly Running From Death)
-				self.values.player.bleed_out_health_multiplier = {2}
-				self.values.player.additional_lives = {1, 3}
+				--Undying (Formerly Nine Lives, Formerly Running From Death)
+				self.values.player.bleed_out_health_multiplier = {2, 3}
+				self.values.player.primary_weapon_when_downed = {true}
 
-				--Up You Go
-				self.values.temporary.revived_damage_resist = {{0.7, 10}}
-				self.values.player.revived_health_regain = {1.4, 2.2}
-				
+				--What Doesn't Kill (Formerly Up You Go)
+				self.values.player.damage_absorption_addend = {0.3}
+				self.values.player.damage_absorption_low_revives = {0.1}
+
 				--Swan Song
 				self.values.temporary.berserker_damage_multiplier = { {1, 3}, {1, 9} }
 
-				--Undying
+				--Haunt (Formerly Undying)
 				self.values.player.cheat_death_chance = {0.2, 0.45}
+				self.values.player.killshot_spooky_panic_chance = {0.08}
+				self.values.player.killshot_extra_spooky_panic_chance = {0.2}
 				
 				--Messiah
 				self.values.player.messiah_revive_from_bleed_out = {1, 3}
 				self.values.player.pistol_revive_from_bleed_out = {1, 3}
+				self.values.player.infinite_messiah = {true}
+				self.values.player.additional_lives = {1, 3}
 			--}
 			
 			--[[   BRAWLER SUBTREE   ]]--
@@ -822,21 +1127,23 @@ function UpgradesTweakData:_init_pd2_values()
 				self.values.temporary.melee_kill_increase_reload_speed = {{1.25, 10}}
 
 				--Pumping Iron	
-				self.values.player.non_special_melee_multiplier = {1.05, 1.1, 1.15, 1.2}
-				self.values.player.melee_damage_multiplier = {1.05, 1.1, 1.15, 1.2}
-				self.values.player.melee_swing_multiplier = {1.25, 1.5}
-				self.values.player.melee_swing_multiplier_delay = {0.75, 0.5}
+				self.values.player.non_special_melee_multiplier = {1.25, 1.5, 1.75, 2}
+				self.values.player.melee_damage_multiplier = {1.25, 1.5, 1.75, 2}
+				self.values.player.melee_swing_multiplier = {1.2, 1.5}
+				self.values.player.melee_swing_multiplier_delay = {0.8, 0.5}
 				
 				--Counter Strike
 				self.values.player.counter_strike_melee = {true}
 				self.values.player.counter_strike_spooc = {true}
-				self.values.player.spooc_damage_resist = {0.5}
+				self.values.player.deflect_ranged = {0.9}
+				self.values.player.spooc_damage_resist = {0.2, 0.5}
 
 				--Frenzy (Berserker)
 				self.values.player.max_health_reduction = {0.25}
-				self.values.player.healing_reduction = {0.25, 0.50}
-               			self.values.player.health_damage_reduction = {0.85, 0.7}
-                		self.values.player.real_health_damage_reduction = {0.7, 0.4}
+				self.values.player.healing_reduction = {0.00, 0.25}
+				self.values.player.frenzy_deflection = {0.20, 0.45}
+               	--self.values.player.health_damage_reduction = {0.85, 0.7}
+                --self.values.player.real_health_damage_reduction = {0.7, 0.4}
 				
 				--Berserker (Frenzy)
 				self.player_damage_health_ratio_threshold = 0.5
@@ -846,14 +1153,15 @@ function UpgradesTweakData:_init_pd2_values()
 			--}
 		--}
 
-		if Global.game_settings and Global.game_settings.single_player then
+	if Global.game_settings and Global.game_settings.single_player then
 		self.values.cable_tie.quantity_1 = {16}
+		self.values.player.corpse_dispose_amount = {12, 16}
 	end
 
 	--Perk Deck shit--
 	
 	--Shared stuff--
-	self.values.weapon.passive_damage_multiplier = {1.05, 1.1, 1.15, 1.2}     
+	self.values.weapon.passive_damage_multiplier = {1.25, 1.5, 1.75, 2}     
 	
 	self.values.temporary.armor_break_invulnerable = {
 		{2, 15}
@@ -911,6 +1219,8 @@ function UpgradesTweakData:_init_pd2_values()
 		1.25
 	}
 	--infiltrator stuff
+	self.infiltrator_dr_range = 1200
+	self.values.player.melee_stacking_heal = {true}
 	self.values.temporary.melee_life_leech = {
 		{0.08, 08}
 	}
@@ -943,7 +1253,7 @@ function UpgradesTweakData:_init_pd2_values()
 	self.values.team.armor.multiplier = {1.05}
 	self.values.team.health.passive_multiplier = {1.05}
 	self.hostage_max_num = {
-		health_regen = 1,
+		health_regen = 4,
 		health = 4,
 		stamina = 4,
 		damage_dampener = 1
@@ -990,21 +1300,21 @@ function UpgradesTweakData:_init_pd2_values()
 	}
 	
 	--Hey you're getting your grinder on my grinder
-	self.values.player.level_5_armor_addend = {-7}
+	self.values.player.level_5_armor_addend = {-5}
 	self.damage_to_hot_data = {
 		armors_allowed = {"level_5"},
 		works_with_armor_kit = true,
-		tick_time = 0.5,
-		total_ticks = 10,
-		max_stacks = false,
-		stacking_cooldown = 1.5,
+		tick_time = 1,
+		total_ticks = 6,
+		max_stacks = 5,
+		stacking_cooldown = 0.5,
 		add_stack_sources = {
 			bullet = true,
 			explosion = true,
 			melee = true,
 			taser_tased = true,
-			poison = true,
-			fire = true,
+			poison = false,
+			fire = false,
 			projectile = true,
 			swat_van = true,
 			sentry_gun = false,
@@ -1017,7 +1327,7 @@ function UpgradesTweakData:_init_pd2_values()
 		0.3,
 		0.4
 	}	
-	self.values.player.damage_to_hot_extra_ticks = {2}
+	self.values.player.damage_to_hot_extra_ticks = {3}
 	
 	self.values.player.perk_armor_loss_multiplier = {
 		0.5,
@@ -1047,6 +1357,8 @@ function UpgradesTweakData:_init_pd2_values()
 			civilian = false
 		}
 	}
+	self.values.player.dodge_stacking_heal = {true}
+	self.values.player.dodge_on_revive = {true}	
 
 	--Gambler
  	self.loose_ammo_restore_health_values = {
@@ -1089,41 +1401,41 @@ function UpgradesTweakData:_init_pd2_values()
 	--Anarchist stuff--
 	self.values.player.armor_grinding = {
 		{
-			{3.0, 3.0},
-			{3.5, 3.5},
-			{4.0, 4.0},
-			{4.5, 4.5},
-			{5.0, 5.0},
-			{5.5, 5.5},
-			{6.0, 6.0}
+			{2.4, 3.0},
+			{2.8, 3.5},
+			{3.2, 4.0},
+			{3.6, 4.5},
+			{4.0, 5.0},
+			{4.4, 5.5},
+			{4.8, 6.0}
 		}
 	}
 	
 	self.values.player.health_decrease = {0.5}
 	
 	self.values.player.armor_increase = {
-		0.45,
-		0.6,
-		0.75
+		0.50,
+		0.75,
+		1.00
 	}
 
 	self.values.player.damage_to_armor = {
 		{
-			{1.5, 3},
-			{1.8, 3},
 			{2.1, 3},
 			{2.4, 3},
-			{2.6, 3},
-			{2.8, 3},
-			{3.0, 3}
+			{2.7, 3},
+			{3.0, 3},
+			{3.2, 3},
+			{3.4, 3},
+			{3.6, 3}
 		}
 	}
 	
 	--Ex President
 	self.values.player.armor_health_store_amount = {
 		0.4,
-		0.8,
-		1.2
+		0.7,
+		1.0
 	}	
 	self.values.player.armor_max_health_store_multiplier = {
 		1.25
@@ -1151,9 +1463,12 @@ function UpgradesTweakData:_init_pd2_values()
 	--Chico--
 	--kingpin
 	self.values.temporary.chico_injector = {
-		{0.5, 4},
-		{0.5, 5},
-		{0.5, 6}
+		{0.3, 4},
+		{0.3, 5},
+		{0.3, 6}
+	}
+	self.values.player.chico_injector_speed = {
+		1.2
 	}
 	self.values.player.chico_armor_multiplier = {
 		1.05,
@@ -1161,21 +1476,21 @@ function UpgradesTweakData:_init_pd2_values()
 		1.15
 	}
 	self.values.player.chico_injector_low_health_multiplier = {
-		{0.25, 0.2}
+		{0.25, 0.5}
 	}	
 	self.values.player.chico_injector_health_to_speed = {
-		{5, 1}
+		{0.3, 1}
 	}
-
 	--Are these the dreamers we were told about?--
 	--sicario
 	self.smoke_screen_armor_regen = {2.0} --Multiplier for armor regen speed.
 	self.values.player.sicario_multiplier = {0.35} --Multiplier for dodge gained per second while inside grenade.
+	self.values.player.bomb_cooldown_reduction = {1} --Cooldown reduction on smoke bomb for dodging.
 	
 	--alcoholism is no joke
 	--stoic
 	self.values.player.armor_to_health_conversion = {
-		40
+		50
 	}
 	self.values.player.damage_control_passive = {{
 		30,
@@ -1215,27 +1530,33 @@ function UpgradesTweakData:_init_pd2_values()
 	
 	--Fat benis :DDDDD
 	--biker?
-	self.wild_trigger_time = 10
-	self.wild_max_triggers_per_time = 5	
-	self.values.player.wild_health_amount = {0.1}
-	self.values.player.wild_armor_amount = {0.1}
+	self.wild_trigger_time = 2
+	self.wild_max_triggers_per_time = 1
+	self.values.player.wild_health_amount = {0.2}
+	self.values.player.wild_armor_amount = {0.0}
 	self.values.player.less_health_wild_armor = {{
-		0.1,
-		0.1
+		0.0,
+		0.0
 	}}
 	self.values.player.less_health_wild_cooldown = {{
-		0.1,
-		0.1
+		0.0,
+		0.0
 	}}
 	self.values.player.less_armor_wild_health = {{
-		0.1,
-		0.1
+		0.25,
+		0.2
 	}}
 	self.values.player.less_armor_wild_cooldown = {{
-		0.1,
-		0.1
-	}}	
-	
+		0.25,
+		0.5
+	}}
+
+	self.values.player.biker_armor_regen = {
+		--Amount regenerated per tick, time between ticks, time fast forwarded when melee kills are done.
+		{1.0, 3.0, 0.0},
+		{2.0, 2.5, 3.5} 
+	}
+
 	--Tag Team--
 	self.values.player.tag_team_base = {
 		{
@@ -1275,7 +1596,7 @@ function UpgradesTweakData:_init_pd2_values()
 	--Hacker
 	self.values.player.pocket_ecm_jammer_base = {
 		{
-			cooldown_drain = 4,
+			cooldown_drain = 3,
 			duration = 12
 		}
 	}	
@@ -1287,19 +1608,6 @@ function UpgradesTweakData:_init_pd2_values()
 	}	
 	
 end
-
-local sc_utd_init = UpgradesTweakData.init
-function UpgradesTweakData:init(tweak_data)
-	sc_utd_init(self, tweak_data)
-	
-	self.definitions.jeb = {
-		dlc = "rest",
-		factory_id = "wpn_fps_pis_jeb",
-		weapon_id = "jeb",
-		category = "weapon"
-	}	
-	table.insert(self.level_tree[50].upgrades, "jeb")
-end	
 
 --Added new definitions--
 
@@ -1323,6 +1631,33 @@ function UpgradesTweakData:_player_definitions()
 		upgrade = {
 			value = 2,
 			upgrade = "revived_health_regain",
+			category = "player"
+		}
+	}	
+	self.definitions.player_drill_deploy_speed_multiplier = {
+		name_id = "menu_player_drill_fix_interaction_speed_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "drill_fix_interaction_speed_multiplier",
+			category = "player"
+		}
+	}		
+	self.definitions.player_drill_fix_interaction_speed_multiplier_1 = {
+		name_id = "menu_player_drill_fix_interaction_speed_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "drill_fix_interaction_speed_multiplier",
+			category = "player"
+		}
+	}	
+	self.definitions.player_drill_fix_interaction_speed_multiplier_2 = {
+		name_id = "menu_player_drill_fix_interaction_speed_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "drill_fix_interaction_speed_multiplier",
 			category = "player"
 		}
 	}		
@@ -1387,6 +1722,24 @@ function UpgradesTweakData:_player_definitions()
 			category = "akimbo"
 		}
 	}		
+	self.definitions.weapon_special_damage_taken_multiplier_1 = {
+		name_id = "menu_weapon_special_damage_taken_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "special_damage_taken_multiplier",
+			category = "weapon"
+		}
+	}
+	self.definitions.weapon_special_damage_taken_multiplier_2 = {
+		name_id = "menu_weapon_special_damage_taken_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "special_damage_taken_multiplier",
+			category = "weapon"
+		}
+	}	
     self.definitions.player_detection_risk_add_movement_speed_1 = {
             category = "feature",
             name_id = "menu_player_detection_risk_add_movement_speed",
@@ -1558,15 +1911,15 @@ function UpgradesTweakData:_player_definitions()
 			value = 2
 		}
 	}
-	self.definitions.player_suppression_resist = {
+	self.definitions.player_deflect_ranged = {
 		category = "feature",
 		name_id = "menu_player_panic_suppression",
 		upgrade = {
 			category = "player",
-			upgrade = "suppression_resist",
+			upgrade = "deflect_ranged",
 			value = 1
 		}
-	}
+	}	
 	self.definitions.player_ignore_suppression_flinch = {
 		category = "feature",
 		name_id = "menu_player_panic_suppression",
@@ -1630,21 +1983,21 @@ function UpgradesTweakData:_player_definitions()
 			value = 1
 		}
 	}	
-	self.definitions.player_dodge_to_heal = {
+	self.definitions.player_dodge_stacking_heal = {
 		category = "feature",
-		name_id = "menu_player_dodge_to_heal",
+		name_id = "menu_player_dodge_stacking_heal",
 		upgrade = {
 			category = "player",
-			upgrade = "dodge_to_heal",
+			upgrade = "dodge_stacking_heal",
 			value = 1
 		}
 	}
-	self.definitions.player_melee_to_heal = {
+	self.definitions.player_melee_stacking_heal = {
 		category = "feature",
-		name_id = "menu_player_melee_to_heal",
+		name_id = "menu_player_melee_stacking_heal",
 		upgrade = {
 			category = "player",
-			upgrade = "melee_to_heal",
+			upgrade = "melee_stacking_heal",
 			value = 1
 		}
 	}
@@ -1751,6 +2104,24 @@ function UpgradesTweakData:_player_definitions()
 			category = "temporary",
 			upgrade = "damage_speed_multiplier",
 			value = 2
+		}
+	}
+	self.definitions.player_silencer_concealment_increase_1 = {
+		name_id = "menu_player_silencer_concealment_increase_1",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "silencer_concealment_increase",
+			category = "player"
+		}
+	}
+	self.definitions.player_silencer_concealment_increase_2 = {
+		name_id = "menu_player_silencer_concealment_increase_2",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "silencer_concealment_increase",
+			category = "player"
 		}
 	}
 	self.definitions.player_real_health_damage_reduction_1 = {
@@ -1971,6 +2342,15 @@ function UpgradesTweakData:_player_definitions()
 			value = 1
 		}
 	}
+	self.definitions.player_bomb_cooldown_reduction = {
+		category = "feature",
+		name_id = "menu_player_bomb_cooldown_reduction",
+		upgrade = {
+			category = "player",
+			upgrade = "bomb_cooldown_reduction",
+			value = 1
+		}
+	}
 	self.definitions.player_tag_team_damage_absorption_1 = {
 		category = "feature",
 		upgrade = {
@@ -1986,8 +2366,7 @@ function UpgradesTweakData:_player_definitions()
 			upgrade = "tag_team_damage_absorption",
 			category = "player"
 		}
-	}		
-	
+	}
 	self.definitions.temporary_chico_injector_1 = {
 		name_id = "menu_temporary_chico_injector_1",
 		category = "temporary",
@@ -2016,6 +2395,42 @@ function UpgradesTweakData:_player_definitions()
 			upgrade = "chico_injector",
 			synced = true,
 			category = "temporary"
+		}
+	}
+	self.definitions.player_chico_injector_speed = {
+		name_id = "menu_player_chico_injector_speed",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "chico_injector_speed",
+			category = "player"
+		}
+	}
+	self.definitions.pistol_swap_speed_multiplier_1 = {
+		name_id = "menu_pistol_swap_speed_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "swap_speed_multiplier",
+			category = "pistol"
+		}
+	}	
+	self.definitions.pistol_swap_speed_multiplier_2 = {
+		name_id = "menu_pistol_swap_speed_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "swap_speed_multiplier",
+			category = "pistol"
+		}
+	}	
+	self.definitions.pistol_move_spread_multiplier = {
+		name_id = "menu_snp_move_spread_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "move_spread_multiplier",
+			category = "pistol"
 		}
 	}		
 	
@@ -2351,6 +2766,24 @@ function UpgradesTweakData:_saw_definitions()
 			category = "player"
 		}
 	}
+	self.definitions.player_biker_armor_regen_1 = {
+		name_id = "menu_player_biker_armor_regen",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "biker_armor_regen",
+			category = "player"
+		}
+	}
+	self.definitions.player_biker_armor_regen_2 = {
+		name_id = "menu_player_biker_armor_regen",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "biker_armor_regen",
+			category = "player"
+		}
+	}
 	self.definitions.player_melee_kill_dodge_regen = {
 		name_id = "menu_player_melee_kill_dodge_regen",
 		category = "feature",
@@ -2369,7 +2802,7 @@ function UpgradesTweakData:_saw_definitions()
 			category = "player"
 		}
 	}
-	self.definitions.player_spooc_damage_resist = {
+	self.definitions.player_spooc_damage_resist_1 = {
 		name_id = "menu_player_spooc_damage_resist",
 		category = "feature",
 		upgrade = {
@@ -2378,6 +2811,184 @@ function UpgradesTweakData:_saw_definitions()
 			category = "player"
 		}
 	}
-end
-
+	self.definitions.player_spooc_damage_resist_2 = {
+		name_id = "menu_player_spooc_damage_resist",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "spooc_damage_resist",
+			category = "player"
+		}
+	}	
+	self.definitions.player_trigger_happy_bodyshot_refresh = {
+		name_id = "menu_player_trigger_happy_bodyshot_refresh",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "trigger_happy_bodyshot_refresh",
+			category = "player"
+		}
+	}
+	self.definitions.player_desperado_bodyshot_refresh = {
+		name_id = "menu_player_desperado_bodyshot_refresh",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "desperado_bodyshot_refresh",
+			category = "player"
+		}
+	}
+	self.definitions.player_frenzy_deflection_1 = {
+		name_id = "menu_player_frenzy_deflection",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "frenzy_deflection",
+			category = "player"
+		}
+	}
+	self.definitions.player_frenzy_deflection_2 = {
+		name_id = "menu_player_frenzy_deflection",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "frenzy_deflection",
+			category = "player"
+		}
+	}
+	self.definitions.player_deflection_addend_1 = {
+		name_id = "menu_player_deflection_addend",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "deflection_addend",
+			category = "player"
+		}
+	}
+	self.definitions.player_deflection_addend_2 = {
+		name_id = "menu_player_deflection_addend",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "deflection_addend",
+			category = "player"
+		}
+	}
+	self.definitions.player_bleed_out_health_multiplier_1 = {
+		name_id = "menu_player_bleed_out_health_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "bleed_out_health_multiplier",
+			category = "player"
+		}
+	}
+	self.definitions.player_bleed_out_health_multiplier_2 = {
+		name_id = "menu_player_bleed_out_health_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 2,
+			upgrade = "bleed_out_health_multiplier",
+			category = "player"
+		}
+	}
+	self.definitions.player_resist_melee_push = {
+		name_id = "menu_player_resist_melee_push",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "resist_melee_push",
+			category = "player"
+		}
+	}
+	self.definitions.player_damage_absorption_addend = {
+		name_id = "menu_player_damage_absorption_addend",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "damage_absorption_addend",
+			category = "player"
+		}
+	}
+	self.definitions.player_damage_absorption_low_revives = {
+		name_id = "menu_player_damage_absorption_low_revives",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "damage_absorption_low_revives",
+			category = "player"
+		}
+	}
+	self.definitions.player_infinite_messiah = {
+		name_id = "menu_player_infinite_messiah",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "infinite_messiah",
+			category = "player"
+		}
+	}
+	self.definitions.player_killshot_spooky_panic_chance = {
+		name_id = "menu_player_killshot_spooky_panic_chance",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "killshot_spooky_panic_chance",
+			category = "player"
+		}
+	}
+	self.definitions.player_killshot_extra_spooky_panic_chance = {
+		name_id = "menu_player_killshot_extra_spooky_panic_chance",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "killshot_extra_spooky_panic_chance",
+			category = "player"
+		}
+	}
+	self.definitions.player_throwables_multiplier = {
+		name_id = "menu_player_throwables_multiplier",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "throwables_multiplier",
+			category = "player"
+		}
+	}
+	self.definitions.player_health_damage_bonus_dodge = {
+		name_id = "menu_player_health_damage_bonus_dodge",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "health_damage_bonus_dodge",
+			category = "player"
+		}
+	}
+	self.definitions.player_dodge_heal_no_armor = {
+		name_id = "menu_player_dodge_heal_no_armor",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "dodge_heal_no_armor",
+			category = "player"
+		}
+	}
+	self.definitions.player_backstab_dodge = {
+		name_id = "menu_player_backstab_dodge",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "backstab_dodge",
+			category = "player"
+		}
+	}
+	self.definitions.player_backstab_crits = {
+		name_id = "menu_player_backstab_crits",
+		category = "feature",
+		upgrade = {
+			value = 1,
+			upgrade = "backstab_crits",
+			category = "player"
+		}
+	}
 end
